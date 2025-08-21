@@ -6,7 +6,7 @@ import { toast } from "sonner"
 export default function Login() {
   return (
     <div>
-      <p>login</p>
+      <p className="bg-red-500">login</p>
       <Formik
         initialValues={{ email: "", password: "" }}
         validationSchema={loginValidationSchema}
