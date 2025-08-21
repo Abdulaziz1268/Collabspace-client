@@ -1,40 +1,32 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"
-
-function Login() {
-  return (
-    <div>
-      <h1>Login</h1>
-    </div>
-  )
-}
-function Regisiter() {
-  return (
-    <div>
-      <h1>regisiter</h1>
-    </div>
-  )
-}
-function Feed() {
-  return (
-    <div>
-      <h1>feed</h1>
-    </div>
-  )
-}
+import { Routes, Route, Link } from "react-router-dom"
+import { Toaster } from "sonner"
+import Login from "./Screens/Login"
+import Register from "./Screens/Register"
+import Verification from "./Screens/Verification"
 
 function App() {
   return (
-    <Router>
+    <>
+      <AppRoutes />
+      <Toaster richColors expand={false} position="bottom-center" />
+    </>
+  )
+}
+
+function AppRoutes() {
+  return (
+    <>
       <nav>
-        <Link to="login">Login</Link> | <Link to="register">Register</Link> |{" "}
-        <Link to="feed">Feed</Link>
+        <Link to="/login">Login</Link> |{" "}
+        <Link to="/verification">Register</Link>
       </nav>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Regisiter />} />
-        <Route path="/feed" element={<Feed />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/verification" element={<Verification />} />
+        <Route path="*" element={<div>404 - Page Not Found</div>} />
       </Routes>
-    </Router>
+    </>
   )
 }
 
