@@ -2,8 +2,10 @@ import axios from "axios"
 import { loginValidationSchema } from "../Config/ValidationSchema"
 import { Formik } from "formik"
 import { toast } from "sonner"
+import { useNavigate } from "react-router-dom"
 
 export default function Login() {
+  const navigate = useNavigate()
   return (
     <div>
       <p className="bg-red-500">login</p>
@@ -18,7 +20,10 @@ export default function Login() {
             )
             setSubmitting(false)
             toast.success("success")
-            console.log("success", response.data)
+            const { token, user } = response.data
+            localStorage.setItem("token", token)
+            localStorage.setItem("user", JSON.stringify(user))
+            navigate("/profile")
           } catch (error) {
             console.log(error.message)
             toast.error(error.message)
