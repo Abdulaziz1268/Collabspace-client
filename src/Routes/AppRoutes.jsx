@@ -1,23 +1,25 @@
-import { Link, Route, Routes } from "react-router-dom"
+import { Link, Navigate, Route, Routes } from "react-router-dom"
 import Login from "../Screens/Login"
 import Register from "../Screens/Register"
 import Verification from "../Screens/Verification"
 import Profile from "../Screens/Profile"
+import { useContext } from "react"
+import { AuthContext } from "../Context/Auth"
 
 export default function AppRoutes() {
+  const { isLogged, loading } = useContext(AuthContext)
+
+  if (loading) return <p>Loading...</p>
   return (
-    <>
-      <nav>
-        <Link to="/login">Login</Link> |{" "}
-        <Link to="/verification">Register</Link>
-      </nav>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/verification" element={<Verification />} />
-        <Route path="*" element={<div>404 - Page Not Found</div>} />
-      </Routes>
-    </>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route
+        path="/profile"
+        element={isLogged ? <Profile /> : <Navigate to="/login" />}
+      />
+      <Route path="/register" element={<Register />} />
+      <Route path="/verification" element={<Verification />} />
+      <Route path="*" element={<div>404 - Page Not Found</div>} />
+    </Routes>
   )
 }

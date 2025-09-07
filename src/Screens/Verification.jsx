@@ -52,38 +52,57 @@ export default function Verification() {
   }
 
   return (
-    <div>
-      <p>verification</p>
+    <div className="min-h-screen flex flex-col justify-center items-center gap-3">
       {status !== "sent" ? (
         <>
-          <h3>Enter your Email</h3>
-          <form onSubmit={handleEmailSubmit}>
+          <h3 className="py-5 text-2xl">Enter your Email</h3>
+          <form
+            onSubmit={handleEmailSubmit}
+            className="flex flex-col py-5 px-7 shadow-sm shadow-gray-300 rounded-2xl w-md"
+          >
             <input
+              className="border border-gray-300 rounded-lg p-2 mb-7"
               type="email"
               name="email"
               required
               placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
             />
-            <button type="submit" disabled={isSubmitting}>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-blue-600 text-white p-2 rounded-lg hover:cursor-pointer hover:scale-103 disabled:opacity-30"
+            >
               Submit
             </button>
           </form>
         </>
       ) : (
         <>
-          <h3>Enter the code sent to your email</h3>
-          <form onSubmit={handleCodeSubmit}>
+          <h3 className="py-5 text-2xl">Enter the code sent to your email</h3>
+          <form
+            onSubmit={handleCodeSubmit}
+            className="flex flex-col py-5 px-7 shadow-sm shadow-gray-300 rounded-2xl w-md"
+          >
+            <div>
+              <input type="number" />
+            </div>
             <input
+              className="border border-gray-300 rounded-lg p-2 mb-7"
               type="number"
               name="code"
               required
-              max={6}
+              maxl={6}
               min={6}
-              placeholder="code"
+              placeholder="Verification Code"
+              autoComplete="one-time-code"
               onChange={(e) => setCode(e.target.value)}
             />
-            <button type="submit" disabled={isSubmitting}>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-blue-600 text-white p-2 rounded-lg hover:cursor-pointer hover:scale-103 disabled:opacity-30"
+            >
               Submit
             </button>
           </form>

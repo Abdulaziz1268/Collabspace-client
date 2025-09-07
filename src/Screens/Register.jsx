@@ -8,8 +8,8 @@ export default function Register() {
   const location = useLocation()
   const navigate = useNavigate()
   return (
-    <div>
-      <p>register</p>
+    <div className="w-screen flex flex-col justify-center items-center min-h-screen">
+      <p className="py-5 text-2xl">Sign Up</p>
       <Formik
         initialValues={{ username: "", password: "" }}
         validationSchema={registerValidationSchema}
@@ -42,18 +42,33 @@ export default function Register() {
           handleSubmit,
           isSubmitting,
         }) => (
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-2 shadow-sm shadow-gray-300 rounded-2xl py-10 px-15 w-md"
+          >
+            <label htmlFor="username">Username</label>
             <input
+              autoComplete="username"
+              id="username"
+              className="p-2 border border-gray-400 rounded-lg"
               type="username"
               name="username"
-              placeholder="password"
+              placeholder="Username"
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.username}
             />
-            {errors.username && touched.username && errors.username}
+            {errors.username && touched.username && (
+              <p className="text-red-600">{errors.username}</p>
+            )}
 
+            <label htmlFor="password" className="mt-7">
+              Password
+            </label>
             <input
+              autoComplete="new-password"
+              id="password"
+              className="p-2 border border-gray-400 rounded-lg"
               type="password"
               name="password"
               placeholder="password"
@@ -61,8 +76,14 @@ export default function Register() {
               onBlur={handleBlur}
               value={values.password}
             />
-            {errors.password && touched.password && errors.password}
-            <button type="submit" disabled={isSubmitting}>
+            {errors.password && touched.password && (
+              <p className="text-red-600">{errors.password}</p>
+            )}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="mt-7 hover:scale-103 disabled:opacity-30 hover:cursor-pointer p-2 rounded-lg text-xl bg-blue-600 text-white"
+            >
               Submit
             </button>
           </form>
