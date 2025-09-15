@@ -31,6 +31,7 @@
 // export default Profile
 import { useEffect, useState } from "react"
 import { apiWithUserAuth } from "../Config/Api"
+import { Link } from "react-router-dom"
 
 function Profile() {
   const [data, setData] = useState({})
@@ -81,6 +82,9 @@ function Profile() {
           <p className="mt-2 text-lg text-gray-600">
             View and manage your account information
           </p>
+          <Link to="/feed" className="mt-2 text-blue-600">
+            Go to feed
+          </Link>
         </div>
 
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
