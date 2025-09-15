@@ -15,7 +15,7 @@ export default function Login() {
   const [visibility, setVisibility] = useState(false)
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">
-      <h2 className="py-5 text-2xl">Welcome Back!</h2>
+      <h2 className="py-5 text-xl">Welcome Back!</h2>
       <Formik
         initialValues={{ email: "", password: "" }}
         validationSchema={loginValidationSchema}
