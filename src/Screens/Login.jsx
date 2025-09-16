@@ -23,12 +23,12 @@ export default function Login() {
           try {
             const response = await api.post("/api/auth/login", values)
             setSubmitting(false)
-            toast.success("success")
             const { token, user } = response.data
             localStorage.setItem("token", token)
             localStorage.setItem("user", JSON.stringify(user))
             setIsLogged(true)
-            navigate("/profile")
+            navigate("/feed")
+            toast.success("success", { duration: 3000 })
           } catch (error) {
             console.log(error.message)
             toast.error(error.message)
