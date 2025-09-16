@@ -12,6 +12,7 @@ export const apiWithUserAuth = () => {
   if (!token) return console.log("Invalid token")
   const instance = axios.create({
     baseURL,
+    withCredentials: true,
     timeout: 1000,
     headers: {
       Authorization: `Bearer ${token}`,
