@@ -1,10 +1,10 @@
 import axios from "axios"
 
-const baseURL = "http://localhost:2005"
+export const baseURL = "http://localhost:2005"
 
 const api = axios.create({
   baseURL,
-  timeout: 1000,
+  timeout: 1500,
 })
 
 export const apiWithUserAuth = () => {
@@ -13,7 +13,7 @@ export const apiWithUserAuth = () => {
   const instance = axios.create({
     baseURL,
     withCredentials: true,
-    timeout: 1000,
+    timeout: 1500,
     headers: {
       Authorization: `Bearer ${token}`,
     },

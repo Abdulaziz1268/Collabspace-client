@@ -9,28 +9,26 @@ import { UserContext } from "../Context/User"
 export default function Feed() {
   const [data, setData] = useState([])
   const [postLoading, setPostLoading] = useState(false)
-  const navigate = useNavigate()
   const { userData, loading } = useContext(UserContext)
+  const navigate = useNavigate()
+
+  const fetchFeeds = async () => {
+    try {
+      setPostLoading(true)
+      const api = apiWithUserAuth()
+      const response = await api.get("/api/post/getPosts")
+      setData(response.data)
+      console.log(response.data)
+    } catch (error) {
+      console.log(error.response?.data?.message || error.message)
+    } finally {
+      setPostLoading(false)
+    }
+  }
 
   useEffect(() => {
-    setPostLoading(true)
-    const fetchFeeds = async () => {
-      try {
-        const api = apiWithUserAuth()
-        const response = await api.get("/api/post/getPosts")
-        setData(response.data)
-      } catch (error) {
-        console.log(error.response?.data?.message || error.message)
-      } finally {
-        setTimeout(() => {
-          setPostLoading(false)
-        }, 5000)
-      }
-    }
-
     fetchFeeds()
   }, [])
-  console.log(data)
 
   return (
     <div className="w-full flex justify-center md:justify-end lg:justify-center">
@@ -57,7 +55,12 @@ export default function Feed() {
         </div>
         <div className="bg-gray-400 w-full">
           {data.map((feed, index) => (
-            <FeedCard feed={feed} key={index} postLoading={postLoading} />
+            <FeedCard
+              feed={feed}
+              key={index}
+              postLoading={postLoading}
+              userId={userData._id}
+            />
           ))}
         </div>
       </div>
