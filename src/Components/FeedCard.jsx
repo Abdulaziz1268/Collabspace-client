@@ -1,23 +1,36 @@
-import { useState } from "react"
+import { use, useContext, useEffect, useState } from "react"
 import { FaRegComment, FaRegThumbsUp, FaThumbsUp } from "react-icons/fa6"
 
 import imagePlaceholder from "../assets/imagePlaceholder.png"
 import placeholder from "../assets/placeholder.jpg"
 import videoPlaceholder from "../assets/videoPlaceholder.png"
+import { apiWithUserAuth, baseURL } from "../Config/Api"
 
-export default function FeedCard({ feed, postLoading }) {
-  const [clicked, setClicked] = useState(false)
+export default function FeedCard({ feed, postLoading, userId }) {
+  const [count, setCount] = useState(feed.likes.length)
+  const [clicked, setClicked] = useState(feed.likes.includes(userId))
+  const [isLiking, setIsLiking] = useState(false)
 
-  const handleClick = () => setClicked((prev) => !prev)
+  const handleLike = async () => {
+    if (isLiking) return
+    try {
+      setIsLiking(true)
+      const api = apiWithUserAuth()
+      const { data } = await api.put(`/api/post/${feed._id}/like`)
+      setCount(data.count)
+      setClicked(data.liked)
+    } catch (error) {
+      console.log(error.response?.data?.error || error.message)
+    } finally {
+      setIsLiking(false)
+    }
+  }
+
   return (
     <div className="bg-white my-1">
       <div className="flex">
         <img
-          src={
-            postLoading
-              ? placeholder
-              : `http://localhost:2005${feed.author.imageUrl}`
-          }
+          src={postLoading ? placeholder : `${baseURL}${feed.author.imageUrl}`}
           className={`w-15 h-15 m-2 rounded-full border border-gray-600 ${
             postLoading && "animate-pulse"
           }`}
@@ -36,11 +49,7 @@ export default function FeedCard({ feed, postLoading }) {
       {feed.mediaUrl && feed.mediaUrl.match(/\.(jpeg|jpg|png|gif)$/i) && (
         <div className="flex justify-center bg-black min-h-50">
           <img
-            src={
-              postLoading
-                ? imagePlaceholder
-                : `http://localhost:2005${feed.mediaUrl}`
-            }
+            src={postLoading ? imagePlaceholder : `${baseURL}${feed.mediaUrl}`}
             alt="feed"
             className={`w-full max-h-96 object-contain rounded-md hover:cursor-pointer ${
               postLoading && "animate-pulse"
@@ -57,7 +66,7 @@ export default function FeedCard({ feed, postLoading }) {
             />
           ) : (
             <video
-              src={`http://localhost:2005${feed.mediaUrl}`}
+              src={`${baseURL}${feed.mediaUrl}`}
               controls
               className="w-full aspect-video"
             />
@@ -66,15 +75,17 @@ export default function FeedCard({ feed, postLoading }) {
       )}
       <div className="flex w-full h-15 border-t border-gray-200 mt-2 justify-evenly gap-4 px-4 py-2">
         <div
-          onClick={handleClick}
-          className="bg-gray-200 flex-1 flex hover:cursor-pointer hover:scale-105 transition-transform duration-200 justify-center items-center rounded-full  gap-2"
+          onClick={handleLike}
+          className={`bg-gray-200 flex-1 flex hover:cursor-pointer hover:scale-105 ${
+            isLiking && "opacity-50"
+          } transition-transform duration-200 justify-center items-center rounded-full  gap-2`}
         >
           {clicked ? (
             <FaThumbsUp size={24} color="black" />
           ) : (
             <FaRegThumbsUp size={24} color="black" />
           )}{" "}
-          Like
+          {count}
         </div>
         <div className="bg-gray-200 flex-1 flex hover:cursor-pointer hover:scale-105 transition-transform duration-200 justify-center items-center rounded-full  gap-2">
           <FaRegComment size={24} color="black" /> Comment
