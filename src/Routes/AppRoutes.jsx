@@ -14,18 +14,18 @@ export default function AppRoutes() {
   if (loading) return <p>Loading...</p>
   return (
     <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route
-        path="/profile"
-        element={isLogged ? <Profile /> : <Navigate to="/login" />}
-      />
+      <Route path="/" element={<Login />} />
       <Route
         path="/feed"
-        element={isLogged ? <Feed /> : <Navigate to="/login" />}
+        element={isLogged ? <Feed /> : <Navigate to="/" replace />}
+      />
+      <Route
+        path="/profile"
+        element={isLogged ? <Profile /> : <Navigate to="/" replace />}
       />
       <Route
         path="/post"
-        element={isLogged ? <Post /> : <Navigate to="/login" />}
+        element={isLogged ? <Post /> : <Navigate to="/" replace />}
       />
       <Route path="/register" element={<Register />} />
       <Route path="/verification" element={<Verification />} />
