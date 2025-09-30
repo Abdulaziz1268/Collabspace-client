@@ -8,7 +8,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token")
-    if (!token) return console.log("Invalid token")
+    if (!token) {
+      setLoading(false)
+      return console.log("Invalid token")
+    }
     setIsLogged(true)
     setLoading(false)
   }, [])
