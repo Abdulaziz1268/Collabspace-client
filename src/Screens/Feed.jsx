@@ -18,7 +18,6 @@ export default function Feed() {
       const api = apiWithUserAuth()
       const response = await api.get("/api/post/getPosts")
       setData(response.data)
-      console.log(response.data)
     } catch (error) {
       console.log(error.response?.data?.message || error.message)
     } finally {
