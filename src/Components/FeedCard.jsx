@@ -1,14 +1,18 @@
-import { use, useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { FaRegComment, FaRegThumbsUp, FaThumbsUp } from "react-icons/fa6"
 
 import imagePlaceholder from "../assets/imagePlaceholder.png"
 import placeholder from "../assets/placeholder.jpg"
 import videoPlaceholder from "../assets/videoPlaceholder.png"
 import { apiWithUserAuth, baseURL } from "../Config/Api"
+import Comment from "./Comment"
 
 export default function FeedCard({ feed, postLoading, userId }) {
-  const [count, setCount] = useState(feed.likes.length)
-  const [clicked, setClicked] = useState(feed.likes.includes(userId))
+  const [likeCount, setLikeCount] = useState(feed.likes.length)
+  const [commentCount, setCommentCount] = useState(0)
+  const [comments, setComments] = useState([])
+  const [likeClicked, setLikeClicked] = useState(feed.likes.includes(userId))
+  const [commentClicked, setCommentClicked] = useState(false)
   const [isLiking, setIsLiking] = useState(false)
 
   const handleLike = async () => {
@@ -17,12 +21,70 @@ export default function FeedCard({ feed, postLoading, userId }) {
       setIsLiking(true)
       const api = apiWithUserAuth()
       const { data } = await api.put(`/api/post/${feed._id}/like`)
-      setCount(data.count)
-      setClicked(data.liked)
+      setLikeCount(data.count)
+      setLikeClicked(data.liked)
     } catch (error) {
       console.log(error.response?.data?.error || error.message)
     } finally {
       setIsLiking(false)
+    }
+  }
+
+  useEffect(() => {
+    const fetchCommentCount = async () => {
+      try {
+        const api = apiWithUserAuth()
+        const { data } = await api.get(
+          `/api/comment/getCommentCount/${feed._id}`
+        )
+        setCommentCount(data.count)
+      } catch (error) {
+        console.log(error.response?.data?.error || error.message)
+      }
+    }
+
+    fetchCommentCount()
+  }, [])
+
+  const handleAddComment = async (content) => {
+    try {
+      const api = apiWithUserAuth()
+      await api.post(`/api/comment/addComment/${feed._id}`, {
+        content,
+      })
+      fetchComments()
+    } catch (error) {
+      console.log(error.response?.data?.error || error.message)
+    }
+  }
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const api = apiWithUserAuth()
+      await api.delete(`/api/comment/deleteComment/${commentId}`)
+      fetchComments()
+    } catch (error) {
+      console.log(error.response?.data?.error || error.message)
+    }
+  }
+
+  const handleFetchComment = async () => {
+    setCommentClicked((prev) => {
+      if (!prev) fetchComments()
+
+      return !prev
+    })
+  }
+
+  const fetchComments = async () => {
+    try {
+      const api = apiWithUserAuth()
+      const { data } = await api.get(`/api/comment/getComments/${feed._id}`)
+      setComments(data.comments)
+      console.log(data.comments)
+      setCommentCount(data.count)
+    } catch (error) {
+      console.log(error.response?.data?.error || error.message)
     }
   }
 
@@ -80,17 +142,27 @@ export default function FeedCard({ feed, postLoading, userId }) {
             isLiking && "opacity-50"
           } transition-transform duration-200 justify-center items-center rounded-full  gap-2`}
         >
-          {clicked ? (
+          {likeClicked ? (
             <FaThumbsUp size={24} color="black" />
           ) : (
             <FaRegThumbsUp size={24} color="black" />
           )}{" "}
-          {count}
+          {likeCount}
         </div>
-        <div className="bg-gray-200 flex-1 flex hover:cursor-pointer hover:scale-105 transition-transform duration-200 justify-center items-center rounded-full  gap-2">
-          <FaRegComment size={24} color="black" /> Comment
+        <div
+          onClick={handleFetchComment}
+          className="bg-gray-200 flex-1 flex hover:cursor-pointer hover:scale-105 transition-transform duration-200 justify-center items-center rounded-full  gap-2"
+        >
+          <FaRegComment size={24} color="black" /> {commentCount}
         </div>
       </div>
+      {commentClicked && (
+        <Comment
+          comments={comments}
+          handleAddComment={handleAddComment}
+          handleDeleteComment={handleDeleteComment}
+        />
+      )}
     </div>
   )
 }
