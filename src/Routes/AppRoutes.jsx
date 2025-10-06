@@ -24,6 +24,10 @@ export default function AppRoutes() {
         element={isLogged ? <Profile /> : <Navigate to="/" replace />}
       />
       <Route
+        path="/profile/:id"
+        element={isLogged ? <Profile /> : <Navigate to="/" replace />}
+      />
+      <Route
         path="/post"
         element={isLogged ? <Post /> : <Navigate to="/" replace />}
       />
