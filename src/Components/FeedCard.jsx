@@ -6,6 +6,7 @@ import placeholder from "../assets/placeholder.jpg"
 import videoPlaceholder from "../assets/videoPlaceholder.png"
 import { apiWithUserAuth, baseURL } from "../Config/Api"
 import Comment from "./Comment"
+import { useNavigate } from "react-router-dom"
 
 export default function FeedCard({ feed, postLoading, userId }) {
   const [likeCount, setLikeCount] = useState(feed.likes.length)
@@ -14,6 +15,7 @@ export default function FeedCard({ feed, postLoading, userId }) {
   const [likeClicked, setLikeClicked] = useState(feed.likes.includes(userId))
   const [commentClicked, setCommentClicked] = useState(false)
   const [isLiking, setIsLiking] = useState(false)
+  const navigate = useNavigate()
 
   const handleLike = async () => {
     if (isLiking) return
@@ -81,7 +83,6 @@ export default function FeedCard({ feed, postLoading, userId }) {
       const api = apiWithUserAuth()
       const { data } = await api.get(`/api/comment/getComments/${feed._id}`)
       setComments(data.comments)
-      console.log(data.comments)
       setCommentCount(data.count)
     } catch (error) {
       console.log(error.response?.data?.error || error.message)
@@ -98,7 +99,12 @@ export default function FeedCard({ feed, postLoading, userId }) {
           }`}
         />
         <div className="m-2 py-2">
-          <h2 className="font-semibold">{feed.author.username}</h2>
+          <h2
+            className="font-semibold hover:opacity-50 hover:cursor-pointer"
+            onClick={() => navigate(`/profile/${feed.author._id}`)}
+          >
+            {feed.author.username}
+          </h2>
           <p className="font-extralight text-sm text-gray-400">
             {new Date(feed.updatedAt).toLocaleString(undefined, {
               dateStyle: "medium",
