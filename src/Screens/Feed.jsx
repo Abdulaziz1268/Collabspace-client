@@ -31,7 +31,7 @@ export default function Feed() {
 
   return (
     <div className="w-full flex justify-center md:justify-end lg:justify-center">
-      <div className="flex flex-col justify-center items-center shadow-2xl md:w-2/3 lg:w-3/6">
+      <div className="flex flex-col justify-center items-center shadow-2xl w-full md:w-2/3 lg:w-3/6">
         <div
           className={`w-full px-3 flex items-center bg-white ${
             loading && "animate-pulse"
