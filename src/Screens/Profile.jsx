@@ -1,191 +1,76 @@
-// import { useEffect, useState } from "react"
-// import { apiWithUserAuth } from "../Config/Api"
-
-// function Profile() {
-//   const [data, setData] = useState({})
-
-//   useEffect(() => {
-//     handleClick()
-//   }, [])
-
-//   const handleClick = async () => {
-//     try {
-//       const api = apiWithUserAuth()
-//       const response = await api.get("/api/user/profile")
-
-//       setData(response.data)
-//       console.log(JSON.parse(localStorage.getItem("user")))
-//       console.log(response.data)
-//     } catch (error) {
-//       console.log(error)
-//     }
-//   }
-//   return (
-//     <div>
-//       <h4>{data.message}</h4>
-//       <p>{data.user?.username}</p>
-//     </div>
-//   )
-// }
-
-// export default Profile
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { apiWithUserAuth } from "../Config/Api"
-import { Link } from "react-router-dom"
+import { useParams } from "react-router-dom"
+import { UserContext } from "../Context/User"
+import FeedCard from "../Components/FeedCard"
 
 function Profile() {
-  const [data, setData] = useState({})
-  const [loading, setLoading] = useState(true)
-  const [localUser, setLocalUser] = useState(null)
+  const [user, setUser] = useState({})
+  const [posts, setPosts] = useState([])
+  const [postLoading, setPostLoading] = useState(false)
+  const { userData, loading } = useContext(UserContext)
+  const { id: userId } = useParams()
 
   useEffect(() => {
-    handleClick()
-    // Get user data from localStorage
-    const userData = localStorage.getItem("user")
-    if (userData) {
-      setLocalUser(JSON.parse(userData))
-    }
-  }, [])
+    fetchProfile()
+  }, [userId, userData._id])
 
-  const handleClick = async () => {
+  const fetchProfile = async () => {
     try {
+      setPostLoading(true)
       const api = apiWithUserAuth()
-      const response = await api.get("/api/user/profile")
-      setData(response.data)
-      setLoading(false)
+      const { data } = await api.get(
+        `/api/user/getuser/${userId ? userId : userData._id}`
+      )
+
+      setUser(data.user)
+      setPosts(data.posts)
     } catch (error) {
-      console.log(error)
-      setLoading(false)
+      console.log(error.response?.data?.error || error.message)
+    } finally {
+      setPostLoading(false)
     }
   }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-3 border-b-3 border-indigo-500"></div>
-          </div>
-          <p className="text-center text-gray-600">Loading your profile...</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen w-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-extrabold text-gray-900">
-            User Profile
-          </h1>
-          <p className="mt-2 text-lg text-gray-600">
-            View and manage your account information
-          </p>
-          <Link to="/feed" className="mt-2 text-blue-600">
-            Go to feed
-          </Link>
-        </div>
-
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-          <div className="px-4 py-5 sm:px-6 bg-indigo-600 text-white">
-            <h3 className="text-lg leading-6 font-medium">
-              Account Information
-            </h3>
-            <p className="mt-1 max-w-2xl text-sm text-indigo-100">
-              Personal details and account information.
+    <div className="w-full flex justify-center md:justify-end lg:justify-center">
+      <div className="flex flex-col justify-center items-center shadow-2xl w-full md:w-2/3 lg:w-3/6">
+        <div
+          className={`w-full px-3 flex items-center bg-white ${
+            loading && "animate-pulse"
+          }`}
+        >
+          <img
+            src={
+              !loading
+                ? `http://localhost:2005${userData.imageUrl}`
+                : placeholder
+            }
+            className="w-30 h-30 m-2 rounded-full border border-gray-600"
+          />
+          <div>
+            <p className="text-3xl font-semibold pt-3 ml-5  flex-1">
+              {user.username}
+            </p>
+            <p className="ml-5 font-normal text-gray-400">
+              {posts.length} Posts
             </p>
           </div>
-          <div className="border-t border-gray-200">
-            <dl>
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Username</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  {data.user?.username ||
-                    localUser?.username ||
-                    "Not available"}
-                </dd>
-              </div>
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">
-                  Email address
-                </dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  {data.user?.email || localUser?.email || "Not available"}
-                </dd>
-              </div>
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">
-                  Account status
-                </dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                    Active
-                  </span>
-                </dd>
-              </div>
-              <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">
-                  Member since
-                </dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  {data.user?.createdAt
-                    ? new Date(data.user.createdAt).toLocaleDateString()
-                    : "Not available"}
-                </dd>
-              </div>
-              <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">About</dt>
-                <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                  To edit your profile information, please contact our support
-                  team.
-                </dd>
-              </div>
-            </dl>
-          </div>
         </div>
-
-        <div className="mt-10 bg-white shadow sm:rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">
-              Quick Actions
-            </h3>
-            <div className="mt-5">
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                <div className="bg-indigo-50 overflow-hidden shadow rounded-lg">
-                  <div className="px-4 py-5 sm:p-6">
-                    <h4 className="text-sm font-medium text-indigo-600">
-                      Edit Profile
-                    </h4>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Update your personal information
-                    </p>
-                  </div>
-                  <div className="bg-indigo-100 px-4 py-4 sm:px-6">
-                    <div className="text-xs font-medium text-indigo-700 hover:text-indigo-900 cursor-pointer">
-                      Edit details &rarr;
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-green-50 overflow-hidden shadow rounded-lg">
-                  <div className="px-4 py-5 sm:p-6">
-                    <h4 className="text-sm font-medium text-green-600">
-                      Security
-                    </h4>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Change password and security settings
-                    </p>
-                  </div>
-                  <div className="bg-green-100 px-4 py-4 sm:px-6">
-                    <div className="text-xs font-medium text-green-700 hover:text-green-900 cursor-pointer">
-                      Security settings &rarr;
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <div className="bg-gray-400 w-full pt-1 ">
+          {posts.length > 0 ? (
+            posts.map((feed, index) => (
+              <FeedCard
+                feed={feed}
+                key={index}
+                postLoading={postLoading}
+                userId={user._id}
+              />
+            ))
+          ) : (
+            <div className="bg-white h-full flex justify-center items-center ">
+              <p className="my-10 ">No posts yet.</p>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
