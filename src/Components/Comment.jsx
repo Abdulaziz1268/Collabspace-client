@@ -1,8 +1,8 @@
 import { useContext, useState } from "react"
 import { baseURL } from "../Config/Api"
 import { UserContext } from "../Context/User"
-import { FaDeleteLeft, FaTrash } from "react-icons/fa6"
 import { toast, Toaster } from "sonner"
+import { useNavigate } from "react-router-dom"
 
 export default function Comment({
   comments,
@@ -11,6 +11,7 @@ export default function Comment({
 }) {
   const { userData } = useContext(UserContext)
   const [content, setContent] = useState("")
+  const navigate = useNavigate()
 
   return (
     <div className="flex flex-col">
@@ -25,7 +26,12 @@ export default function Comment({
               />
               <div>
                 <div className="p-2 rounded-xl bg-gray-300">
-                  <h2 className="font-semibold">{comment.author.username}</h2>
+                  <h2
+                    className="font-semibold hover:opacity-50 hover:cursor-pointer"
+                    onClick={() => navigate(`/profile/${comment.author._id}`)}
+                  >
+                    {comment.author.username}
+                  </h2>
                   <p>{comment.content}</p>
                 </div>
                 <div className="flex flex-row items-center gap-3">
