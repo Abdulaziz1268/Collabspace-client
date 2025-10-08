@@ -32,6 +32,20 @@ export default function Feed() {
   return (
     <div className="w-full flex justify-center md:justify-end lg:justify-center">
       <div className="flex flex-col justify-center items-center shadow-2xl w-full md:w-2/3 lg:w-3/6">
+        <div className="flex justify-between items-center w-full">
+          <h1 className="self-start mx-5 my-5 font-semibold text-4xl">
+            Collab Space
+          </h1>
+          <img
+            src={
+              !loading
+                ? `http://localhost:2005${userData.imageUrl}`
+                : placeholder
+            }
+            className="w-15 h-15 m-2 rounded-full border border-gray-600 hover:cursor-pointer hover:opacity-50"
+            onClick={() => navigate("/profile")}
+          />
+        </div>
         <div
           className={`w-full px-3 flex items-center bg-white ${
             loading && "animate-pulse"
@@ -43,7 +57,7 @@ export default function Feed() {
                 ? `http://localhost:2005${userData.imageUrl}`
                 : placeholder
             }
-            className="w-15 h-15 m-2 rounded-full border border-gray-600"
+            className="w-20 h-20 m-2 rounded-full border border-gray-600"
           />
           <p
             className="hover:cursor-pointer text-xl bg-gray-300 py-3 pl-7 m-2 rounded-full flex-1"
