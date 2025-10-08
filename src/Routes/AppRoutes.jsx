@@ -7,6 +7,7 @@ import { useContext } from "react"
 import { AuthContext } from "../Context/Auth"
 import Feed from "../Screens/Feed"
 import Post from "../Screens/Post"
+import EditProfile from "../Screens/EditProfile"
 
 export default function AppRoutes() {
   const { isLogged, loading } = useContext(AuthContext)
@@ -22,6 +23,10 @@ export default function AppRoutes() {
       <Route
         path="/profile"
         element={isLogged ? <Profile /> : <Navigate to="/" replace />}
+      />
+      <Route
+        path="/editProfile"
+        element={isLogged ? <EditProfile /> : <Navigate to="/" replace />}
       />
       <Route
         path="/profile/:id"

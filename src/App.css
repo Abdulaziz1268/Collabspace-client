@@ -1,1 +1,8 @@
 @import "tailwindcss";
+/* Hide default eye/clear buttons in password fields (Chrome, Edge, Safari) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  display: none !important;
+  pointer-events: none;
+}
