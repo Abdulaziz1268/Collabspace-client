@@ -24,3 +24,4 @@
 ## 💡 Reflections
 
 - Didn't work much today.
+- Just checking
